@@ -13,6 +13,8 @@ tags:
 paths:
   /user/:
     $ref: './resources/user.yaml#/UserPath'
+  /user/login/:
+    $ref: './resources/user.yaml#/LoginPath'
 
 components:
   schemas:
