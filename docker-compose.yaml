@@ -1,0 +1,45 @@
+version: "3.0"
+services:
+  # swagger ui
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: swagger_ui_container
+    ports:
+      - 8000:8080
+    volumes:
+      - ./doc:/usr/share/nginx/html/doc
+    environment:
+      API_URL: doc/api.yaml
+
+  # data store
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.2
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    networks:
+      - es-net
+    ports:
+      - 9200:9200
+
+  # visualization tool
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.2.2
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - es-net
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+
+volumes:
+  es-data:
+
+networks:
+  es-net:

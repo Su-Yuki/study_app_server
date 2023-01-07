@@ -1,0 +1,23 @@
+openapi: 3.0.0
+
+info:
+  title: ドキュメントですよ
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/
+
+tags:
+  - name: User
+
+paths:
+  /user/:
+    $ref: './resources/user.yaml#/UserPath'
+
+components:
+  schemas:
+    User:
+      $ref: './schemas/user_schema.yaml'
+  # securitySchemes:
+  #   BearerAuth:
+  #     $ref: './schemas/security_schema.yaml'
