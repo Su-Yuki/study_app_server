@@ -1,0 +1,13 @@
+_format_version: '3.0'
+
+services:
+  - name: booksearch-service
+    url: 'http://booksearch:8080'
+    protocol: http
+    routes:
+      - name: books
+        paths:
+          - /books
+        methods:
+          - GET
+        strip_path: false
