@@ -22,7 +22,7 @@ services:
       - KONG_DECLARATIVE_CONFIG=/kong/kong.yml
       - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
       - KONG_PROXY_LISTEN=0.0.0.0:8000, 0.0.0.0:8443 ssl, 0.0.0.0:9080 http2, 0.0.0.0:9081 http2 ssl
-    restart: on-failure
+    # restart: always
     ports:
       - 8000:8000
       - 8443:8443
@@ -31,53 +31,70 @@ services:
     command: ["kong", "docker-start", "-vvv"]
     volumes:
       - ./gateway/kong.yml:/kong/kong.yml
-  konga:
-    image: pantsel/konga
-    container_name: konga
-    ports:
-      - 1337:1337
-    links:
-      - kong:kong
 
   # service
   booksearch:
     build: ./booksearch
     container_name: booksearch
     hostname: booksearch
-    ports:
-      - 8080:8080
+    depends_on:
+      - booksearch-rdb
+    # restart: always
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url"  : "jdbc:mysql://booksearch-rdb:3306/booksearch?useSSL=false",
+        "spring.datasource.username" : "user",
+        "spring.datasource.password" : "password",
+        "spring.jpa.hibernate.ddl-auto" : "create-drop"
+      }'
 
   # data store
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.2
-    container_name: elasticsearch
+  booksearch-rdb:
+    image: mysql:8.0
+    container_name: booksearch-rdb
+    hostname: booksearch-rdb
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      - xpack.security.enabled=false
-      - "discovery.type=single-node"
-    volumes:
-      - es-data:/usr/share/elasticsearch/data
-    networks:
-      - es-net
-    # ports:
-    #   - 9200:9200
-
-  # visualization tool
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.2.2
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    networks:
-      - es-net
-    depends_on:
-      - elasticsearch
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=booksearch
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
     ports:
-      - 5601:5601
+      - 3356:3306
+    volumes:
+      - booksearch-rdb-data:/var/lib/mysql
+
+  # # data store
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.2.2
+  #   container_name: elasticsearch
+  #   environment:
+  #     - xpack.security.enabled=false
+  #     - "discovery.type=single-node"
+  #   volumes:
+  #     - es-data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - es-net
+  #   ports:
+  #     - 9200:9200
+
+  # # visualization tool
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.2.2
+  #   container_name: kibana
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   networks:
+  #     - es-net
+  #   depends_on:
+  #     - elasticsearch
+  #   ports:
+  #     - 5601:5601
 
 volumes:
-  kong-data:
   es-data:
+  booksearch-rdb-data:
 
 networks:
-  kong-net:
   es-net:

@@ -5,9 +5,18 @@ services:
     url: 'http://booksearch:8080'
     protocol: http
     routes:
-      - name: books
+      - name: list-books
         paths:
           - /books
         methods:
           - GET
         strip_path: false
+
+      - name: create-book
+        paths:
+          - /books
+        methods:
+          - POST
+        strip_path: false
+
+
