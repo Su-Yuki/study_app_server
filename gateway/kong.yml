@@ -12,6 +12,13 @@ services:
           - GET
         strip_path: false
 
+      - name: get-books
+        paths:
+          - /books
+        methods:
+          - GET
+        strip_path: false
+
       - name: create-book
         paths:
           - /books
@@ -19,4 +26,17 @@ services:
           - POST
         strip_path: false
 
+      - name: update-book
+        paths:
+          - /books
+        methods:
+          - PUT
+        strip_path: false
+
+      - name: delete-book
+        paths:
+          - /books
+        methods:
+          - DELETE
+        strip_path: false
 
