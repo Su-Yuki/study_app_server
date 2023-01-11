@@ -1,6 +1,5 @@
 package study.booksearch.entity;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -13,8 +12,6 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 public class Book {
