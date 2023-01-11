@@ -6,6 +6,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>booksearch</module>
+        <module>mylibrary</module>
     </modules>
 </project>

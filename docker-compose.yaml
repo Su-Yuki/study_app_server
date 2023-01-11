@@ -33,37 +33,38 @@ services:
       - ./gateway/kong.yml:/kong/kong.yml
 
   # service
-  booksearch:
-    build: ./booksearch
-    container_name: booksearch
-    hostname: booksearch
+  mylibrary:
+    build: ./mylibrary
+    container_name: mylibrary
+    hostname: mylibrary
     depends_on:
-      - booksearch-rdb
+      - mylibrary-rdb
     # restart: always
     environment:
       SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url"  : "jdbc:mysql://booksearch-rdb:3306/booksearch?useSSL=false",
-        "spring.datasource.username" : "user",
-        "spring.datasource.password" : "password",
-        "spring.jpa.hibernate.ddl-auto" : "create-drop"
+        "spring.mvc.async.request-timeout": 1000,
+        "spring.datasource.url": "jdbc:mysql://mylibrary-rdb:3306/mylibrary?useSSL=false",
+        "spring.datasource.username": "user",
+        "spring.datasource.password": "password",
+        "spring.jpa.hibernate.ddl-auto": "create-drop"
       }'
 
   # data store
-  booksearch-rdb:
+  mylibrary-rdb:
     image: mysql:8.0
-    container_name: booksearch-rdb
-    hostname: booksearch-rdb
+    container_name: mylibrary-rdb
+    hostname: mylibrary-rdb
     restart: always
     command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=booksearch
+      - MYSQL_DATABASE=mylibrary
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
     ports:
       - 3356:3306
     volumes:
-      - booksearch-rdb-data:/var/lib/mysql
+      - mylibrary-rdb-data:/var/lib/mysql
 
   # # data store
   # elasticsearch:
@@ -93,8 +94,8 @@ services:
   #     - 5601:5601
 
 volumes:
-  es-data:
-  booksearch-rdb-data:
+  # es-data:
+  mylibrary-rdb-data:
 
-networks:
-  es-net:
+# networks:
+#   es-net:
