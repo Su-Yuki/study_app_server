@@ -1,4 +1,4 @@
-package study.mylibrary;
+package study.mylibrary.controllers;
 
 
 import java.util.List;
@@ -17,20 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 import study.mylibrary.entity.Book;
 import study.mylibrary.service.BookService;
 
-
 @RestController
-public class Controller {
+@RequestMapping(path = "/mylibrary/books")
+public class BookController {
 
 	@Autowired
     BookService service;
 
-	@RequestMapping(value="/books", method=RequestMethod.GET)
+	@RequestMapping(value="/", method=RequestMethod.GET)
 	public List<Book> getBooks() {
 		List<Book> books = service.findAll();
 		return books;
 	}
 
-	@RequestMapping(value="/books/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Book> getBook(@PathVariable UUID id) {
 		Optional<Book> book = service.findById(id);
 		if (book.isPresent()) {
@@ -40,13 +40,13 @@ public class Controller {
 		}
 	}
 
-	@RequestMapping(value="/books", method=RequestMethod.POST)
+	@RequestMapping(value="/", method=RequestMethod.POST)
 	public ResponseEntity<Book> createBook(@RequestBody Book body) {
 		Book book = service.save(body);
 		return new ResponseEntity<Book>(book, null, HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value="/books/{id}", method=RequestMethod.PUT)
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Book> updateBook(@PathVariable("id") UUID id, @RequestBody Book body) {
 		Optional<Book> book = service.findById(id);
 		if (book.isPresent()) {
@@ -57,7 +57,7 @@ public class Controller {
 		}
 	}
 
-	@RequestMapping(value="/books/{id}", method=RequestMethod.DELETE)
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteBook(@PathVariable("id") UUID id) {
 		Optional<Book> book = service.findById(id);
 		if (book.isPresent()) {

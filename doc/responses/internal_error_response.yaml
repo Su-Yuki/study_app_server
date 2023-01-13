@@ -1,0 +1,3 @@
+description: Internal Server Error Response
+content:
+  application/json: {}

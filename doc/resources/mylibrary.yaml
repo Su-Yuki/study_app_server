@@ -1,0 +1,116 @@
+MylibraryBookPath:
+  get:
+    tags:
+      - Mylibrary
+    summary: Get Books
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/book_schema.yaml'
+      '500':
+        $ref: '../responses/internal_error_response.yaml'
+
+  post:
+    tags:
+      - Mylibrary
+    summary: Create a New Book
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - title
+              - status
+            properties:
+              title:
+                type: string
+              categoryId:
+                type: string
+              status:
+                type: string
+                description: Has to be one of "TOREAD", "READING" and "DONE"
+              url:
+                type: string
+                description: Any usuful link (e.g. shopping website, blog)
+              imageUrl:
+                type: string
+                description: URL where the book's image/icon is stored
+            example:
+              title: How To Become Rich
+              categoryId: Self-Development
+              status: TOREAD
+              url: https://please.read.me/xxxx
+              imageUrl: https://storage/xxxx
+    responses:
+      '201':
+        $ref: '../responses/created_response.yaml'
+      '500':
+        $ref: '../responses/internal_error_response.yaml'
+
+
+MylibraryBookWithIDPath:
+  get:
+    tags:
+      - Mylibrary
+    summary: Get a Book
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/book_schema.yaml'
+      '404':
+        $ref: '../responses/not_found_response.yaml'
+      '500':
+        $ref: '../responses/internal_error_response.yaml'
+
+  put:
+    tags:
+      - Mylibrary
+    summary: Update a Book
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              categoryId:
+                type: string
+              status:
+                type: string
+                description: Has to be one of "TOREAD", "READING" and "DONE"
+              url:
+                type: string
+                description: Any usuful link (e.g. shopping website, blog)
+              imageUrl:
+                type: string
+                description: URL where the book's image/icon is stored
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/book_schema.yaml'
+      '404':
+        $ref: '../responses/not_found_response.yaml'
+      '500':
+        $ref: '../responses/internal_error_response.yaml'
+
+  delete:
+    tags:
+      - Mylibrary
+    summary: Delete a Book
+    responses:
+      '204':
+        $ref: '../schemas/book_schema.yaml'
+      '404':
+        $ref: '../responses/not_found_response.yaml'
+      '500':
+        $ref: '../responses/internal_error_response.yaml'
