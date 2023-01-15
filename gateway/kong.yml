@@ -1,0 +1,42 @@
+_format_version: '3.0'
+
+services:
+  - name: mylibrary-service
+    url: 'http://mylibrary:8080'
+    protocol: http
+    routes:
+      - name: list-books
+        paths:
+          - /mylibrary/books
+        methods:
+          - GET
+        strip_path: false
+
+      - name: get-books
+        paths:
+          - /mylibrary/books
+        methods:
+          - GET
+        strip_path: false
+
+      - name: create-book
+        paths:
+          - /mylibrary/books
+        methods:
+          - POST
+        strip_path: false
+
+      - name: update-book
+        paths:
+          - /mylibrary/books
+        methods:
+          - PUT
+        strip_path: false
+
+      - name: delete-book
+        paths:
+          - /mylibrary/books
+        methods:
+          - DELETE
+        strip_path: false
+

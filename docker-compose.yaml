@@ -5,41 +5,99 @@ services:
     image: swaggerapi/swagger-ui
     container_name: swagger_ui_container
     ports:
-      - 8000:8080
+      - 9000:8080
     volumes:
       - ./doc:/usr/share/nginx/html/doc
     environment:
       API_URL: doc/api.yaml
 
-  # data store
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.2
-    container_name: elasticsearch
+  # api gateway
+  kong:
+    image: kong:3.0
+    container_name: kong
     environment:
-      - xpack.security.enabled=false
-      - "discovery.type=single-node"
+      - LC_CTYPE=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/kong/kong.yml
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+      - KONG_PROXY_LISTEN=0.0.0.0:8000, 0.0.0.0:8443 ssl, 0.0.0.0:9080 http2, 0.0.0.0:9081 http2 ssl
+    # restart: always
+    ports:
+      - 8000:8000
+      - 8443:8443
+      - 8001:8001
+      - 8444:8444
+    command: ["kong", "docker-start", "-vvv"]
     volumes:
-      - es-data:/usr/share/elasticsearch/data
-    networks:
-      - es-net
-    ports:
-      - 9200:9200
+      - ./gateway/kong.yml:/kong/kong.yml
 
-  # visualization tool
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.2.2
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    networks:
-      - es-net
+  # service
+  mylibrary:
+    build: ./mylibrary
+    container_name: mylibrary
+    hostname: mylibrary
     depends_on:
-      - elasticsearch
+      - mylibrary-rdb
+    # restart: always
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.mvc.async.request-timeout": 1000,
+        "spring.datasource.url": "jdbc:mysql://mylibrary-rdb:3306/mylibrary?useSSL=false",
+        "spring.datasource.username": "user",
+        "spring.datasource.password": "password",
+        "spring.jpa.hibernate.ddl-auto": "create-drop"
+      }'
     ports:
-      - 5601:5601
+      - 8002:8080
+
+  # data store
+  mylibrary-rdb:
+    image: mysql:8.0
+    container_name: mylibrary-rdb
+    hostname: mylibrary-rdb
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=mylibrary
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    ports:
+      - 3356:3306
+    volumes:
+      - mylibrary-rdb-data:/var/lib/mysql
+
+  # # data store
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.2.2
+  #   container_name: elasticsearch
+  #   environment:
+  #     - xpack.security.enabled=false
+  #     - "discovery.type=single-node"
+  #   volumes:
+  #     - es-data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - es-net
+  #   ports:
+  #     - 9200:9200
+
+  # # visualization tool
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.2.2
+  #   container_name: kibana
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   networks:
+  #     - es-net
+  #   depends_on:
+  #     - elasticsearch
+  #   ports:
+  #     - 5601:5601
 
 volumes:
-  es-data:
+  # es-data:
+  mylibrary-rdb-data:
 
-networks:
-  es-net:
+# networks:
+#   es-net:

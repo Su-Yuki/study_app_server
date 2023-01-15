@@ -5,19 +5,21 @@ info:
   version: 1.0.0
 
 servers:
-  - url: http://localhost:8080/
+  - url: http://localhost:8000/
 
 tags:
-  - name: User
+  - name: Mylibrary
 
 paths:
-  /user/:
-    $ref: './resources/user.yaml#/UserPath'
+  /mylibrary/books:
+    $ref: './resources/mylibrary.yaml#/MylibraryBookPath'
+  /mylibrary/books/{id}:
+    $ref: './resources/mylibrary.yaml#/MylibraryBookWithIDPath'
 
 components:
   schemas:
-    User:
-      $ref: './schemas/user_schema.yaml'
+    Book:
+      $ref: './schemas/book_schema.yaml'
   # securitySchemes:
   #   BearerAuth:
   #     $ref: './schemas/security_schema.yaml'

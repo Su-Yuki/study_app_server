@@ -1,0 +1,15 @@
+type: object
+properties:
+  title:
+    type: string
+  categoryId:
+    type: string
+  status:
+    type: string
+    description: Has to be one of "TOREAD", "READING" and "DONE"
+  url:
+    type: string
+    description: Any usuful link (e.g. shopping website, blog)
+  imageUrl:
+    type: string
+    description: URL where the book's image/icon is stored
