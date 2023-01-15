@@ -2,6 +2,7 @@ package study.mylibrary.controllers;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import study.mylibrary.entity.Book;
+import study.mylibrary.entity.Status;
 import study.mylibrary.service.BookService;
 
 @RestController
@@ -28,8 +31,16 @@ public class BookController {
     BookService service;
 
 	@GetMapping("")
-	public List<Book> getBooks() {
-		List<Book> books = service.findAll();
+	public List<Book> getBooks(@RequestParam(name="status") Optional<List<Status>> status, @RequestParam(name="size") Optional<String> size) {
+		// TODO: limit the number of items for each status by using the "size" param
+		List<Book> books;
+		if (status.isPresent()) {
+			System.out.println("Statuses: " + status.get().toString());
+			books = service.findByStatusIn(status.get());
+		} else {
+			System.out.println("Statuses: all");
+			books = service.findAll();
+		}
 		return books;
 	}
 
