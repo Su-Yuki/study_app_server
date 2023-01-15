@@ -14,28 +14,28 @@ services:
 
       - name: get-books
         paths:
-          - /mylibrary//books
+          - /mylibrary/books
         methods:
           - GET
         strip_path: false
 
       - name: create-book
         paths:
-          - /mylibrary//books
+          - /mylibrary/books
         methods:
           - POST
         strip_path: false
 
       - name: update-book
         paths:
-          - /mylibrary//books
+          - /mylibrary/books
         methods:
           - PUT
         strip_path: false
 
       - name: delete-book
         paths:
-          - /mylibrary//books
+          - /mylibrary/books
         methods:
           - DELETE
         strip_path: false

@@ -48,6 +48,8 @@ services:
         "spring.datasource.password": "password",
         "spring.jpa.hibernate.ddl-auto": "create-drop"
       }'
+    ports:
+      - 8002:8080
 
   # data store
   mylibrary-rdb:

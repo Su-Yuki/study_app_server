@@ -8,29 +8,32 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import study.mylibrary.entity.Book;
 import study.mylibrary.service.BookService;
 
 @RestController
-@RequestMapping(path = "/mylibrary/books")
+@RequestMapping("/mylibrary/books")
 public class BookController {
 
 	@Autowired
     BookService service;
 
-	@RequestMapping(value="/", method=RequestMethod.GET)
+	@GetMapping("")
 	public List<Book> getBooks() {
 		List<Book> books = service.findAll();
 		return books;
 	}
 
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	@GetMapping("{id}")
 	public ResponseEntity<Book> getBook(@PathVariable UUID id) {
 		Optional<Book> book = service.findById(id);
 		if (book.isPresent()) {
@@ -40,13 +43,13 @@ public class BookController {
 		}
 	}
 
-	@RequestMapping(value="/", method=RequestMethod.POST)
+	@PostMapping("")
 	public ResponseEntity<Book> createBook(@RequestBody Book body) {
 		Book book = service.save(body);
 		return new ResponseEntity<Book>(book, null, HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	@PutMapping("{id}")
 	public ResponseEntity<Book> updateBook(@PathVariable("id") UUID id, @RequestBody Book body) {
 		Optional<Book> book = service.findById(id);
 		if (book.isPresent()) {
@@ -57,7 +60,7 @@ public class BookController {
 		}
 	}
 
-	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	@DeleteMapping("{id}")
 	public ResponseEntity<Void> deleteBook(@PathVariable("id") UUID id) {
 		Optional<Book> book = service.findById(id);
 		if (book.isPresent()) {
